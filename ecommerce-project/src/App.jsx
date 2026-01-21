@@ -8,7 +8,7 @@ import './App.css'
 function App() {
   return (
     <Routes>
-      <Route index element={<HomePage />} /> {/* path="/" can be simplified to index and since there is nother between the <Route></Route>, then it be simplified into a self closing tag <Route />*/}
+      <Route index element={<HomePage />} /> {/* path="/" can be simplified to index and since there is nothing between the <Route></Route>, then it be simplified into a self closing tag <Route />*/}
       <Route path="checkout" element={<CheckoutPage />} />
       <Route path="orders" element={<OrdersPage />}/>
       <Route path="tracking" element= {<TrackingPage />} />
