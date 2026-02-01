@@ -3,6 +3,25 @@ import './HomePage.css';
 import { products } from '../../starting-code/data/products'; // this is used to import the products data from the data folder
 
 export function HomePage() {
+    
+    // fetch is used to get data from an external source, in this case it is getting the products data from the local server
+    // this fetch code is does not finish right away, it will take time for the data to be retrieved from the server therefore it is an asynchronous operation
+    // fetch ('http://localhost:3000/api/products') 
+        //.then((response) => { // when fetch gets a response from the server or the backend, it will save it as a parameter in the inner function and the parameter will be called response
+            // response.json().then((data) => { // the response object has a method called .json() which gives us the data attached to the response, response.json() is also asynchronous and cannot be saved in a variable; this means that it is also a promise and therefore .then() has to be used again to get the data
+                // console.log(data); // the data parameter in this inner function contains the actual data from the server, in this case it is the products data; we are logging it to the console to see what it looks like
+            // });  
+        // })
+    
+    // the above is one way of getting data from the backend using fetch and promises. there is another shortcut way of doing the above written below.
+    
+    fetch ('http://localhost:3000/api/products')
+        .then((response) => { // we use .then() to wait for a response from the backend
+            return response.json();
+        }) .then((data) => { // this .then() waits for the return response.json() to finish and then it runs the console.log
+            console.log(data);
+        });
+    
     return (
         <>
             <title>Ecommerce Project</title>
