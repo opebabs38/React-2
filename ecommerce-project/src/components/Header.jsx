@@ -5,7 +5,7 @@ export function Header( { cart } ) { // the cart prop is passed in from the home
     // to calculate the total quantity of the items in the cart, we will need to create a variable called totalQuantity and set it to 0, then we will loop through each item in the cart and add its quantity to the totalQuantity variable, this way we will get the total quantity of items in the cart and we can display it in the header
     let totalQuantity = 0; // this variable will hold the total quantity of items in the cart, it is initialized as 0 because we will be adding the quantity of each item in the cart to it
 
-    cart.forEach(() => { // we are using the forEach method to loop through each item in the cart array and add its quantity to the totalQuantity variable
+    cart.forEach((cartItem) => { // we are using the forEach method to loop through each item in the cart array and add its quantity to the totalQuantity variable
         totalQuantity += cartItem.quanity; // for each item in the cart, we are adding its quantity to the totalQuantity variable using the += operator which is a shorthand for totalQuantity = totalQuantity + cartItem.quantity
     });
     return (

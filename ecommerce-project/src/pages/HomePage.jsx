@@ -28,12 +28,12 @@ export function HomePage() {
         }); */
     
     useEffect(() => {
-        axios.get('http://localhost:3000/api/products')
+        axios.get('/api/products') // in vite, we can set up a shortcut that allows us to use /api/products instead of the full url, which would be http://localhost:3000/api/products
             .then((response) => {
                 setProducts(response.data); // the setProducts function will save the data from the backend into the products state variable above and this variable can then be used to display the products on the page
             });
 
-        axios.get('http://localhost:3000/api/cart-items')
+        axios.get('/api/cart-items')
             .then((response) => {
                 setCart(response.data);
             });
