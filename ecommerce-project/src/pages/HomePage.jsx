@@ -1,9 +1,12 @@
 import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { Header } from '../components/Header';
 import './HomePage.css';
-import { products } from '../../starting-code/data/products'; // this is used to import the products data from the data folder
+/*import { products } from '../../starting-code/data/products';*/ // this is used to import the products data from the data folder
+// it is no longer needed because we are getting the products data from the backend using fetch and axios, but it is still here in case we want to use it for testing or if we want to use it as a fallback in case the backend is not working
 
 export function HomePage() {
+    const [products, setProducts] = useState([]); //
     
     // fetch is used to get data from an external source, in this case it is getting the products data from the local server
     // this fetch code is does not finish right away, it will take time for the data to be retrieved from the server therefore it is an asynchronous operation
@@ -21,13 +24,21 @@ export function HomePage() {
             return response.json();
         }) .then((data) => { // this .then() waits for the return response.json() to finish and then it runs the console.log
             console.log(data);
-        });
-    */
+        }); */
+    
+    useEffect(() => {
+        axios.get('http://localhost:3000/api/products')
+            .then((response) => {
+                setProducts(response.data); // the setProducts function will save the data from the backend into the products state variable above and this variable can then be used to display the products on the page
+            });
+    }, []); // the empty array as the second parameter makes sure that this useEffect only runs once when the component is first rendered
 
+    /*
     axios.get('http://localhost:3000/api/products') // axios is a library that makes it easier to make requests to the backend. it is similar to fetch but it has some additional features that make it easier to use, like saving the data from the backend directly inside the response object
         .then((response) => {
             response.data; // in axios the data is already converted to json so we can access it directly using response.data
         })
+    */
 
 
     return (
