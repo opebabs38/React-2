@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Header } from '../components/Header';
+import { formatMoney } from '../utils/money';
 import './HomePage.css';
 /*import { products } from '../../starting-code/data/products';*/ // this is used to import the products data from the data folder
 // it is no longer needed because we are getting the products data from the backend using fetch and axios, but it is still here in case we want to use it for testing or if we want to use it as a fallback in case the backend is not working
@@ -75,7 +76,7 @@ export function HomePage({ cart }) { // the cart prop is passed in from the App 
                                 <div className="product-rating-count link-primary"> {product.rating.count} </div>
                             </div>
                             
-                            <div className="product-price"> ${(product.priceCents / 100). toFixed(2)}</div> {/* this extra () around the product.price, converts the number into a string and the toFixed tells the system how many decimal places to show */}
+                            <div className="product-price">{formatMoney(product.priceCents)}</div>
                             
                             <div className="product-quantity-container">
                                 <select>

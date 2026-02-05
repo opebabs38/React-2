@@ -11,7 +11,7 @@ function App() {
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/cart-items')
+    axios.get('/api/cart-items?expand=product') // the expand query parameter is used to tell the backend to include the product data for each cart item in the response, this way we can access the product data for each cart item without having to make a separate request to the backend for each product
       .then((response) => {
         setCart(response.data);
       });
