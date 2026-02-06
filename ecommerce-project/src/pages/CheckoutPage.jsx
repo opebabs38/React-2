@@ -7,12 +7,18 @@ import { formatMoney } from '../utils/money';
 
 export function CheckoutPage({ cart }) { // this is to access the cart data passed from the App component
     const [deliveryOptions, setDeliveryOptions] = useState([]); // this is used to save the delivery options data that we will fetch from the server, we are using useState to create a state variable called deliveryOptions and a function to update it called setDeliveryOptions, we are initializing it with an empty array because we expect to receive an array of delivery options from the server
+    const [paymentSummary, setPaymentSummary] = useState(null); // this is used to save the payment summary data that we will fetch from the server, we are using useState to create a state variable called paymentSummary and a function to update it called setPaymentSummary, we are initializing it with null because we expect to receive an object with the payment summary data from the server
 
     useEffect(() => { // 
         axios.get('/api/delivery-options?expand=estimatedDeliveryTime') // this is used to fetch the delivery options data from the server, we are using axios to make a GET request to the /api/delivery-options endpoint, this will return a promise that resolves to the response from the server
             .then((response) => {
                 setDeliveryOptions(response.data);
             })
+
+        axios.get('/api/payment-summary') // this is used to fetch the payment summary data from the server, we are using axios to make a GET request to the /api/payment-summary endpoint, this will return a promise that resolves to the response from the server
+            .then((response) => {
+                setPaymentSummary(response.data);
+            });
     }, [])
     return (
         <>
@@ -38,7 +44,7 @@ export function CheckoutPage({ cart }) { // this is to access the cart data pass
                 <div className="checkout-grid">
                     <div className="order-summary">
                         {deliveryOptions.length > 0 && cart.map((cartItem) => { // this is used to generate a cart item container for each item in the cart, we are using the .map method to loop through each item in the cart array and create a cart item container for each one
-                        // we are also checking if the deliveryOptions array has any data in it before we try to render the cart items, this is because we need the delivery options data to render the cart items correctly, if we try to render the cart items before we have the delivery options data, we will get an error because we will be trying to access properties of undefined
+                            // we are also checking if the deliveryOptions array has any data in it before we try to render the cart items, this is because we need the delivery options data to render the cart items correctly, if we try to render the cart items before we have the delivery options data, we will get an error because we will be trying to access properties of undefined
                             const selectedDeliveryOption = deliveryOptions.find((deliveryOption) => { // this is used to find the delivery option that is currently selected for the cart item, we are using the .find method to loop through each delivery option and return the one that has the same id as the cart item's deliveryOptionId
                                 return deliveryOption.id === cartItem.deliveryOptionId;
                             });
@@ -64,20 +70,20 @@ export function CheckoutPage({ cart }) { // this is to access the cart data pass
                                             <div className="delivery-options-title"> Choose a delivery option: </div>
                                             {deliveryOptions.map((deliveryOption) => {
                                                 let priceString = 'FREE SHIPPING'; // here we are creating a variable called priceString that will be used to store the price of the delivery option
-                                                
+
                                                 if (deliveryOption.priceCents > 0) {
-                                                    priceString = `${formatMoney(deliveryOption.priceCents)} - Shipping`; 
+                                                    priceString = `${formatMoney(deliveryOption.priceCents)} - Shipping`;
                                                     // if the price of the delivery option is greater than 0, we will update the priceString variable to display the price of the delivery option, 
                                                     // we are using template strings to insert the price of the delivery option into the string, we are also using the formatMoney function to format the price of the delivery option correctly
                                                 }
 
                                                 return (
                                                     <div key={deliveryOption.id} className="delivery-option">
-                                                        <input type="radio" 
-                                                        checked={deliveryOption.id === cartItem.deliveryOptionId} // here we are setting the checked attribute of the radio button to true if the delivery option is the same as the one that is currently selected, this will allow us to visually indicate which delivery option is currently selected
-                                                        className="delivery-option-input" name={`delivery-option-${cartItem.productId}`} /> {/* here we are creating a new naming attribute for the radio selector, because each set of selector should be unique */}
+                                                        <input type="radio"
+                                                            checked={deliveryOption.id === cartItem.deliveryOptionId} // here we are setting the checked attribute of the radio button to true if the delivery option is the same as the one that is currently selected, this will allow us to visually indicate which delivery option is currently selected
+                                                            className="delivery-option-input" name={`delivery-option-${cartItem.productId}`} /> {/* here we are creating a new naming attribute for the radio selector, because each set of selector should be unique */}
                                                         <div>
-                                                            <div className="delivery-option-date"> {dayjs(deliveryOption.estimatedDeliveryTimeMs).format('dddd, MMMM, D')} 
+                                                            <div className="delivery-option-date"> {dayjs(deliveryOption.estimatedDeliveryTimeMs).format('dddd, MMMM, D')}
                                                                 {/* here we use dayjs to set the date of the delivery time, but to make it come in millisecond form, we will use the data in the deliveryOptions 
                                                                  the .format is used to format the way the date is displayed to the user, dddd represents the days (Monday, Tuesday etc), MMMM represents the month, and D represents the day
                                                                  */}
@@ -95,34 +101,39 @@ export function CheckoutPage({ cart }) { // this is to access the cart data pass
 
                     </div>
 
+                    {/* the below section is for generating the payment summary from the backend */}
                     <div className="payment-summary">
                         <div className="payment-summary-title"> Payment Summary </div>
-                        <div className="payment-summary-row">
-                            <div>Items (3):</div>
-                            <div className="payment-summary-money">$42.75</div>
-                        </div>
+                        {paymentSummary && ( // this checks if the payment summary object exists
+                            <>
+                                <div className="payment-summary-row">
+                                    <div>Items ({paymentSummary.totalItems}):</div> {/* here we are displaying the total number of items in the cart, we are accessing this data from the paymentSummary object that we fetched from the server */}
+                                    <div className="payment-summary-money">{formatMoney(paymentSummary.productsCostCents)}</div> {/* here we are displaying the total cost of the products in the cart, we are accessing this data from the paymentSummary object that we fetched from the server, we are also using the formatMoney function to format the price correctly */}
+                                </div>
 
-                        <div className="payment-summary-row">
-                            <div>Shipping &amp; handling:</div>
-                            <div className="payment-summary-money">$4.99</div>
-                        </div>
+                                <div className="payment-summary-row">
+                                    <div>Shipping &amp; handling:</div>
+                                    <div className="payment-summary-money">{formatMoney(paymentSummary.shippingCostCents)}</div>
+                                </div>
 
-                        <div className="payment-summary-row subtotal-row">
-                            <div>Total before tax:</div>
-                            <div className="payment-summary-money">$47.74</div>
-                        </div>
+                                <div className="payment-summary-row subtotal-row">
+                                    <div>Total before tax:</div>
+                                    <div className="payment-summary-money">{formatMoney(paymentSummary.totalBeforeTaxCents)}</div>
+                                </div>
 
-                        <div className="payment-summary-row">
-                            <div>Estimated tax (10%):</div>
-                            <div className="payment-summary-money">$4.77</div>
-                        </div>
+                                <div className="payment-summary-row">
+                                    <div>Estimated tax (10%):</div>
+                                    <div className="payment-summary-money">{formatMoney(paymentSummary.taxCents)}</div>
+                                </div>
 
-                        <div className="payment-summary-row total-row">
-                            <div>Order total:</div>
-                            <div className="payment-summary-money">$52.51</div>
-                        </div>
+                                <div className="payment-summary-row total-row">
+                                    <div>Order total:</div>
+                                    <div className="payment-summary-money">{formatMoney(paymentSummary.totalCostCents)}</div>
+                                </div>
 
-                        <button className="place-order-button button-primary"> Place your order </button>
+                                <button className="place-order-button button-primary"> Place your order </button>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
