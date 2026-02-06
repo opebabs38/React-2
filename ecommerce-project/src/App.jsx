@@ -22,7 +22,7 @@ function App() {
     <Routes>
       <Route index element={<HomePage  cart={cart}/>} /> {/* path="/" can be simplified to index and since there is nothing between the <Route></Route>, then it be simplified into a self closing tag <Route />*/}
       <Route path="checkout" element={<CheckoutPage cart={cart} />} /> {/* here we added a prop cart so that the cart data is available in the checkout page and the homepage*/}
-      <Route path="orders" element={<OrdersPage />}/>
+      <Route path="orders" element={<OrdersPage cart={cart} />}/>
       <Route path="tracking" element= {<TrackingPage />} />
     </Routes>
   )
