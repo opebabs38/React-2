@@ -31,7 +31,8 @@ export function HomePage({ cart }) { // the cart prop is passed in from the App 
             console.log(data);
         }); */
     
-    useEffect(() => {
+  
+    /* useEffect(() => {
         axios.get('/api/products') // in vite, we can set up a shortcut that allows us to use /api/products instead of the full url, which would be http://localhost:3000/api/products
             .then((response) => {
                 setProducts(response.data); // the setProducts function will save the data from the backend into the products state variable above and this variable can then be used to display the products on the page
@@ -44,7 +45,43 @@ export function HomePage({ cart }) { // the cart prop is passed in from the App 
                 setCart(response.data);
             });
         */
-    }, []); // the empty array as the second parameter makes sure that this useEffect only runs once when the component is first rendered
+    /* }, []); // the empty array as the second parameter makes sure that this useEffect only runs once when the component is first rendered
+    */
+
+    /*
+    1
+    useEffect(async () => {
+        const response = await axios.get('/api/products'); // here we are using async await to run the code asuynchronously but due to it being an await function, it can now be be save as a variable
+        setProducts(response.data);
+    }, []);
+    */
+
+    // 2
+    useEffect(() => {
+        const getHomeData = async () => {
+            const response = await axios.get('/api/products');
+            setProducts(response.data);
+        };
+
+        getHomeData();
+    }, []);
+
+
+    // ( 1 )
+    // in order to use await properly, we need to be inside an async function. however, in React there is a small problem when using async await and useEffect.
+    // when we put async in front of a function as shown above, the function will now return a promise. this is because the function has some asynchronous inside or code that takes some time to finish
+    // that means that this function is going to take some time to finish which is why it has to return a promise.
+    // the problem is that the inner function in useEffect should not return a promise, it should only return nothing or a cleanup function.
+    // a cleanup function is useful if we want to do some cleanup when this component is removed.
+
+    // ( 2 )
+    // to solve this, we will create a new function inside useEffect
+    // this new function will be an async function and the await code will be inside this new function. the useEffect will be left as an ordinary function and it will not return a promise.
+    // it will only call the new async function that we created inside it. this way we can use async await properly without any issues.
+    // at the end we just need to run the function using getHomeData();, as shown above, this gets us the same result as the first method but it is a better way of using async await with useEffect and it does not cause any issues with the return value of useEffect.
+    
+
+    
 
     /*
     axios.get('http://localhost:3000/api/products') // axios is a library that makes it easier to make requests to the backend. it is similar to fetch but it has some additional features that make it easier to use, like saving the data from the backend directly inside the response object

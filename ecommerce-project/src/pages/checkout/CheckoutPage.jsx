@@ -10,17 +10,19 @@ export function CheckoutPage({ cart }) { // this is to access the cart data pass
     const [deliveryOptions, setDeliveryOptions] = useState([]); // this is used to save the delivery options data that we will fetch from the server, we are using useState to create a state variable called deliveryOptions and a function to update it called setDeliveryOptions, we are initializing it with an empty array because we expect to receive an array of delivery options from the server
     const [paymentSummary, setPaymentSummary] = useState(null); // this is used to save the payment summary data that we will fetch from the server, we are using useState to create a state variable called paymentSummary and a function to update it called setPaymentSummary, we are initializing it with null because we expect to receive an object with the payment summary data from the server
 
-    useEffect(() => { // 
-        axios.get('/api/delivery-options?expand=estimatedDeliveryTime') // this is used to fetch the delivery options data from the server, we are using axios to make a GET request to the /api/delivery-options endpoint, this will return a promise that resolves to the response from the server
-            .then((response) => {
-                setDeliveryOptions(response.data);
-            })
+    useEffect(() => {
+        const fetchCheckoutData = async () => {
+            let response = await axios.get('/api/delivery-options?expand=estimatedDeliveryTime'); // this is used to fetch the delivery options data from the server, we are using axios to make a GET request to the /api/delivery-options endpoint, this will return a promise that resolves to the response from the server
+            // let response is being used here instead of const because there are 2 requests here and we might want to reuse this variable.
+            setDeliveryOptions(response.data); 
 
-        axios.get('/api/payment-summary') // this is used to fetch the payment summary data from the server, we are using axios to make a GET request to the /api/payment-summary endpoint, this will return a promise that resolves to the response from the server
-            .then((response) => {
-                setPaymentSummary(response.data);
-            });
-    }, [])
+            response = await axios.get('/api/payment-summary'); // this is used to fetch the payment summary data from the server, we are using axios to make a GET request to the /api/payment-summary endpoint, this will return a promise that resolves to the response from the server
+            setPaymentSummary(response.data);
+        };
+
+        fetchCheckoutData();
+    }, []);
+
     return (
         <>
             <title>Checkout Page</title> {/* the title is here because we want the webpage to display the correct title, do this for all the other pages to give them the correct title */}

@@ -8,24 +8,25 @@ import axios from 'axios';
 import './App.css'
 
 function App() {
-  const [cart, setCart] = useState([]);
+    const [cart, setCart] = useState([]);
 
-  useEffect(() => {
-    axios.get('/api/cart-items?expand=product') // the expand query parameter is used to tell the backend to include the product data for each cart item in the response, this way we can access the product data for each cart item without having to make a separate request to the backend for each product
-      .then((response) => {
-        setCart(response.data);
-      });
-  }, []);
+    useEffect(() => {
+        const fetchAppData = async () => {
+            const response = await axios.get('/api/cart-items?expand=product') // the expand query parameter is used to tell the backend to include the product data for each cart item in the response, this way we can access the product data for each cart item without having to make a separate request to the backend for each product
+            setCart(response.data);
+        };
+        fetchAppData();
+    }, []);
 
 
-  return (
-    <Routes>
-      <Route index element={<HomePage  cart={cart}/>} /> {/* path="/" can be simplified to index and since there is nothing between the <Route></Route>, then it be simplified into a self closing tag <Route />*/}
-      <Route path="checkout" element={<CheckoutPage cart={cart} />} /> {/* here we added a prop cart so that the cart data is available in the checkout page and the homepage*/}
-      <Route path="orders" element={<OrdersPage cart={cart} />}/>
-      <Route path="tracking" element= {<TrackingPage />} />
-    </Routes>
-  )
+    return (
+        <Routes>
+            <Route index element={<HomePage cart={cart} />} /> {/* path="/" can be simplified to index and since there is nothing between the <Route></Route>, then it be simplified into a self closing tag <Route />*/}
+            <Route path="checkout" element={<CheckoutPage cart={cart} />} /> {/* here we added a prop cart so that the cart data is available in the checkout page and the homepage*/}
+            <Route path="orders" element={<OrdersPage cart={cart} />} />
+            <Route path="tracking" element={<TrackingPage />} />
+        </Routes>
+    )
 }
 
 export default App
